@@ -1,39 +1,41 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"github.com/dslipak/pdf"
+	"github.com/koba1108/ocr-golang/internals"
+	"log"
+	"os"
+	"strings"
 )
 
-const DocumentPath = "documents/pdf"
-
-// ファイルを配置してね
 const (
-	Pdf1 = "a.pdf"
-	Pdf2 = "b.pdf"
+	DocumentPath = "documents/pdf"
+	OutputPath   = "outputs/pdf"
+	OutputExt    = ".txt"
 )
 
 func main() {
-	content, err := readPdf(fmt.Sprintf("%s/%s", DocumentPath, Pdf2))
+	filePaths, err := internals.ReadFilenames(DocumentPath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to read filenames: %w", err))
 	}
-	fmt.Println(content)
-}
-
-func readPdf(path string) (string, error) {
-	r, err := pdf.Open(path)
-	if err != nil {
-		return "", err
+	for _, path := range filePaths {
+		if !strings.HasSuffix(path, ".pdf") {
+			continue
+		}
+		content, page, err := internals.ReadPDF(path)
+		if err != nil {
+			panic(fmt.Errorf("failed to read pdf: %w", err))
+		}
+		file, err := os.Create(internals.MakeOutputPath(path, DocumentPath, OutputPath, OutputExt))
+		if err != nil {
+			panic(fmt.Errorf("failed to create file: %w", err))
+		}
+		_, err = file.WriteString(content)
+		if err != nil {
+			panic(fmt.Errorf("failed to write to file: %w", err))
+		}
+		_ = file.Close()
+		log.Printf("%s created: page = %d", path, page)
 	}
-	b, err := r.GetPlainText()
-	if err != nil {
-		return "", err
-	}
-	var buf bytes.Buffer
-	if _, err = buf.ReadFrom(b); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
 }
