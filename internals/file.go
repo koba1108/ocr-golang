@@ -6,6 +6,10 @@ import (
 	"github.com/dslipak/pdf"
 	"github.com/unidoc/unioffice/common/license"
 	unidoc "github.com/unidoc/unioffice/document"
+	licenseV3 "github.com/unidoc/unipdf/v3/common/license"
+	"github.com/unidoc/unipdf/v3/extractor"
+	"github.com/unidoc/unipdf/v3/model"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -60,6 +64,10 @@ func ReadDocument(path string) (string, map[string]string, error) {
 
 func SetUnicodeLicenseKey() error {
 	// UnicodeLicenseKey is methods in config.go (ignored)
+	err := licenseV3.SetMeteredKey(GetUnicodeLicenseKey())
+	if err != nil {
+		return err
+	}
 	return license.SetMeteredKey(GetUnicodeLicenseKey())
 }
 
@@ -79,6 +87,34 @@ func ReadDocx(path string) (string, error) {
 		for _, r := range p.Runs() {
 			res += r.Text()
 		}
+	}
+	return res, nil
+}
+
+func ReadPDF2(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	pdfReader, err := model.NewPdfReader(f)
+	if err != nil {
+		return "", err
+	}
+
+	var res string
+	for _, page := range pdfReader.PageList {
+		ex, err := extractor.New(page)
+		if err != nil {
+			return "", err
+		}
+
+		text, err := ex.ExtractText()
+		if err != nil {
+			return "", err
+		}
+		res += text
 	}
 	return res, nil
 }
