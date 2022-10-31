@@ -6,29 +6,33 @@ import (
 	"github.com/koba1108/ocr-golang/internals"
 	"log"
 	"os"
-	"strings"
 )
 
 const (
-	DocumentPath = "documents/pdf"
-	OutputPath   = "outputs/pdf"
-	OutputExt    = ".txt"
+	SdkName        = "docconv"
+	DocxPath       = "documents/docx"
+	DocxOutputPath = "outputs/docx"
+	PdfPath        = "documents/pdf"
+	PdfOutputPath  = "outputs/pdf"
+	OutputExt      = ".txt"
 )
 
 func main() {
-	filePaths, err := internals.ReadFilenames(DocumentPath)
+	readDocuments(DocxPath, DocxOutputPath)
+	readDocuments(PdfPath, PdfOutputPath)
+}
+
+func readDocuments(docPath, outputPath string) {
+	filePaths, err := internals.ReadFilenames(docPath)
 	if err != nil {
 		panic(fmt.Errorf("failed to read filenames: %w", err))
 	}
 	for _, path := range filePaths {
-		if !strings.HasSuffix(path, ".pdf") {
-			continue
-		}
-		content, metadata, err := internals.ReadPDF2(path)
+		content, metadata, err := internals.ReadDocument(path)
 		if err != nil {
 			panic(fmt.Errorf("failed to read pdf: %w", err))
 		}
-		file, err := os.Create(internals.MakeOutputPath(path, DocumentPath, OutputPath, OutputExt))
+		file, err := os.Create(internals.MakeOutputPath(path, docPath, outputPath, SdkName, OutputExt))
 		if err != nil {
 			panic(fmt.Errorf("failed to create file: %w", err))
 		}

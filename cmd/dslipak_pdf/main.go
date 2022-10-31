@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	SdkName      = "dslipak_pdf"
 	DocumentPath = "documents/pdf"
 	OutputPath   = "outputs/pdf"
 	OutputExt    = ".txt"
@@ -27,7 +28,7 @@ func main() {
 		if err != nil {
 			panic(fmt.Errorf("failed to read pdf: %w", err))
 		}
-		file, err := os.Create(internals.MakeOutputPath(path, DocumentPath, OutputPath, OutputExt))
+		file, err := os.Create(internals.MakeOutputPath(path, DocumentPath, OutputPath, SdkName, OutputExt))
 		if err != nil {
 			panic(fmt.Errorf("failed to create file: %w", err))
 		}

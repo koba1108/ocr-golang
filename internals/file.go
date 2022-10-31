@@ -12,8 +12,8 @@ func ReplaceExt(filename, newExt string) string {
 	return filename[:len(filename)-len(filepath.Ext(filename))] + newExt
 }
 
-func MakeOutputPath(filePath, docPath, outputPath, ext string) string {
-	return ReplaceExt(strings.Replace(filePath, docPath, outputPath, 1), ext)
+func MakeOutputPath(filePath, docPath, outputPath, SdkName, ext string) string {
+	return ReplaceExt(strings.Replace(filePath, docPath, outputPath, 1), "."+SdkName+ext)
 }
 
 func ReadFilenames(dir string) ([]string, error) {
@@ -47,8 +47,8 @@ func ReadPDF(path string) (string, int, error) {
 	return buf.String(), r.NumPage(), nil
 }
 
-// ReadPDF2 is used: docconv
-func ReadPDF2(path string) (string, map[string]string, error) {
+// ReadDocument is used: docconv
+func ReadDocument(path string) (string, map[string]string, error) {
 	r, err := docconv.ConvertPath(path)
 	if err != nil {
 		return "", nil, err
