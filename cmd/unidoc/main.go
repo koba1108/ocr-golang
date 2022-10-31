@@ -25,6 +25,7 @@ func init() {
 
 func main() {
 	readPDF()
+	readDocx()
 }
 
 func readPDF() {
