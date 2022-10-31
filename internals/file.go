@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"code.sajari.com/docconv"
 	"github.com/dslipak/pdf"
+	unidoc "github.com/unidoc/unioffice/document"
+	"log"
 	"path/filepath"
 	"strings"
 )
@@ -54,4 +56,22 @@ func ReadDocument(path string) (string, map[string]string, error) {
 		return "", nil, err
 	}
 	return r.Body, r.Meta, nil
+}
+
+// ReadDocx is used: unidoc
+func ReadDocx(path string) (string, error) {
+	r, err := unidoc.Open(path)
+	if err != nil {
+		return "", err
+	}
+	var ps []unidoc.Paragraph
+	for _, p := range r.Paragraphs() {
+		ps = append(ps, p)
+	}
+	for _, p := range ps {
+		for _, r := range p.Runs() {
+			log.Println(r.Text())
+		}
+	}
+	return "", nil
 }
