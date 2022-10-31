@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"code.sajari.com/docconv"
 	"github.com/dslipak/pdf"
+	"github.com/unidoc/unioffice/common/license"
 	unidoc "github.com/unidoc/unioffice/document"
-	"log"
 	"path/filepath"
 	"strings"
 )
@@ -58,20 +58,27 @@ func ReadDocument(path string) (string, map[string]string, error) {
 	return r.Body, r.Meta, nil
 }
 
+func SetUnicodeLicenseKey() error {
+	// UnicodeLicenseKey is methods in config.go (ignored)
+	return license.SetMeteredKey(GetUnicodeLicenseKey())
+}
+
 // ReadDocx is used: unidoc
 func ReadDocx(path string) (string, error) {
+	// GetUnicodeLicenseKey is methods in config.go (ignored)
 	r, err := unidoc.Open(path)
 	if err != nil {
 		return "", err
 	}
+	var res string
 	var ps []unidoc.Paragraph
 	for _, p := range r.Paragraphs() {
 		ps = append(ps, p)
 	}
 	for _, p := range ps {
 		for _, r := range p.Runs() {
-			log.Println(r.Text())
+			res += r.Text()
 		}
 	}
-	return "", nil
+	return res, nil
 }

@@ -15,6 +15,12 @@ const (
 	OutputExt      = ".txt"
 )
 
+func init() {
+	if err := internals.SetUnicodeLicenseKey(); err != nil {
+		panic(fmt.Errorf("failed to set license key: %w", err))
+	}
+}
+
 func main() {
 	filePaths, err := internals.ReadFilenames(DocxPath)
 	if err != nil {
@@ -23,7 +29,7 @@ func main() {
 	for _, path := range filePaths {
 		content, err := internals.ReadDocx(path)
 		if err != nil {
-			panic(fmt.Errorf("failed to read pdf: %w", err))
+			panic(fmt.Errorf("failed to read docx: %w", err))
 		}
 		file, err := os.Create(internals.MakeOutputPath(path, DocxPath, DocxOutputPath, SdkName, OutputExt))
 		if err != nil {

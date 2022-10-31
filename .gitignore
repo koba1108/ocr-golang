@@ -16,3 +16,4 @@
 
 documents/*
 outputs/*
+internals/config.go
