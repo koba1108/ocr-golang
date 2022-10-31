@@ -2,6 +2,7 @@ package internals
 
 import (
 	"bytes"
+	"code.sajari.com/docconv"
 	"github.com/dslipak/pdf"
 	"path/filepath"
 	"strings"
@@ -29,6 +30,7 @@ func ReadFilenames(dir string) ([]string, error) {
 	return filenames, nil
 }
 
+// ReadPDF is used: dslipak/pdf
 func ReadPDF(path string) (string, int, error) {
 	r, err := pdf.Open(path)
 	if err != nil {
@@ -43,4 +45,13 @@ func ReadPDF(path string) (string, int, error) {
 		return "", 0, err
 	}
 	return buf.String(), r.NumPage(), nil
+}
+
+// ReadPDF2 is used: docconv
+func ReadPDF2(path string) (string, map[string]string, error) {
+	r, err := docconv.ConvertPath(path)
+	if err != nil {
+		return "", nil, err
+	}
+	return r.Body, r.Meta, nil
 }
