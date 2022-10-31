@@ -30,5 +30,9 @@ URL: [https://github.com/unidoc/unioffice](https://github.com/unidoc/unioffice)
 @see: https://github.com/unidoc/unioffice-examples/blob/master/document/edit-document/main.go#L16-L22
 
 ```shell
-$ go run cmd/unidoc/main.go 
+$ go run cmd/unidoc/main.go
+
+Unlicensed version of UniOffice
+- Get a trial license on https://unidoc.io
+panic: failed to read pdf: unioffice license required
 ```
